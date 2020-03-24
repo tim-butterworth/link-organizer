@@ -1,0 +1,25 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+	"only-arrow-functions": true,
+	"typedef": [
+	    true,
+	    "call-signature",
+	    "parameter",
+	    "member-variable-declaration",
+	    "variable-declaration",
+	    "arrow-call-signature",
+	    "arrow-parameter"
+	]
+    },
+    "linterOptions": {
+	"exclude": [
+	    "src/**.test.**"
+	]
+    },
+    "rulesDirectory": []
+}
