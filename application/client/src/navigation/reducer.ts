@@ -1,22 +1,25 @@
-import { Action } from 'redux';
-import { Reducer } from '../common/commonTypes';
+import {
+    Reducer
+    , UnknownAction
+} from '../common/commonTypes';
+import {
+    SavingLink
+    , AddLinkDomainTypes
+} from '../links/add/addLinkDomainEvents';
 
 export enum NavigationActionType {
-    UNKNOWN = "UNKNOWN",
     HOME = "HOME",
     ADD = "ADD"
 }
 
-export interface UnknownNavigationAction extends Action {
-    type: NavigationActionType.UNKNOWN
-}
-export interface HomeNavigationAction extends Action {
+export interface HomeNavigationAction {
     type: NavigationActionType.HOME
 }
-export interface AddNavigationAction extends Action {
+export interface AddNavigationAction {
     type: NavigationActionType.ADD
 }
-export type NavigationAction = UnknownNavigationAction | HomeNavigationAction | AddNavigationAction
+
+export type NavigationAction = UnknownAction | HomeNavigationAction | AddNavigationAction | SavingLink
 
 export enum NavigationLocation {
     HOME = "HOME",
@@ -25,6 +28,13 @@ export enum NavigationLocation {
 
 export interface NavigationState {
     currentLocation: NavigationLocation
+}
+
+const HomeState = {
+    currentLocation: NavigationLocation.HOME
+}
+const AddState = {
+    currentLocation: NavigationLocation.ADD
 }
 
 export interface NavigationCombinedState {
@@ -36,14 +46,13 @@ const initialNavigationState: NavigationState = {
 }
 const navigationReducer: Reducer<NavigationState, NavigationAction> = (
     state: NavigationState = initialNavigationState,
-    { type: actionType }: NavigationAction
+    action: NavigationAction
 ): NavigationState => {
-    if (actionType === NavigationActionType.ADD) {
-        return {
-            currentLocation: NavigationLocation.ADD
-        }
-    } else {
-        return state
+    switch (action.type) {
+        case NavigationActionType.ADD: return AddState
+        case AddLinkDomainTypes.SAVING: return HomeState
+        case NavigationActionType.HOME: return HomeState
+        default: return state
     }
 }
 

@@ -23,6 +23,7 @@ const mapStateToProps: StateToProps<LinksCombinedState, LinksStateProps> = (
 ): LinksStateProps => ({
     links: state.links.linkList
 })
+
 const mapDispatchToProps: DispatchToProps<LinksDispatchProps> = (
     dispatch: Dispatch
 ): LinksDispatchProps => ({

@@ -4,6 +4,11 @@ import {
     , GetAction
 } from '../../common/commonTypes';
 
+import {
+    SavingLink
+    , AddLinkDomainTypes
+} from './addLinkDomainEvents';
+
 interface AddLinkState {
     formData: {
         link: string
@@ -28,7 +33,7 @@ export interface SaveLinkAction {
     }
 }
 
-export type AddLinkAction = UpdateLinkAction | SaveLinkAction | UnknownAction;
+export type AddLinkAction = SavingLink | UpdateLinkAction | SaveLinkAction | UnknownAction;
 
 export interface AddLinkCombinedState {
     addLink: AddLinkState
@@ -63,9 +68,9 @@ const addLinkReducer: Reducer<AddLinkState, AddLinkAction> = (
                 link: action.payload.updatedLink
             }
         }
+        case AddLinkDomainTypes.SAVING: return initialState
+        default: return state
     }
-
-    return state
 }
 
 export {
