@@ -1,0 +1,11 @@
+.remote {
+    background: green;
+}
+
+.pending {
+    background: yellow;
+}
+
+.save-failed {
+    background: red;
+}

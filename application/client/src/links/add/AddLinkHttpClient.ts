@@ -1,19 +1,40 @@
 import { of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { ajax } from 'rxjs/ajax';
+import {
+    map
+    , catchError
+} from 'rxjs/operators';
 
 import {
     Link
     , SaveLinkClient
 } from './addLinkEpic';
 import {
-    getSaveSuccess
-} from './addLinkDomainEvents';
+    saveResultSuccess
+    , saveResultFailure
+} from './addLinkEpic';
 
-const saveLinkHttpClient: SaveLinkClient = (link: Link) => of(getSaveSuccess({
-    localId: "0",
-    remoteId: "10"
-})).pipe(
-    delay(2000)
+const saveLinkHttpClient: SaveLinkClient = (link: Link) => ajax({
+    url: 'http://localhost:8080/links',
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: {
+        url: link.url,
+        description: "Some description"
+    }
+}).pipe(
+    map(response => {
+        console.log('response: ', response)
+
+        return saveResultSuccess
+    }),
+    catchError(error => {
+        console.log('error: ', error);
+
+        return of(saveResultFailure);
+    })
 )
 
 export {

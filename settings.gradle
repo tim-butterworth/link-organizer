@@ -1,4 +1,0 @@
-rootProject.name="links"
-
-include("server")
-project(":server").projectDir = file("application/server")

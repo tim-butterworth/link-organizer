@@ -36,6 +36,13 @@ const getSaveSuccess: GetAction<{ localId: string; remoteId: string; }, SaveSucc
         remoteId
     }
 })
+const getSaveFailure: GetAction<{ localId: string }, SaveFailure> = ({ localId }): SaveFailure => ({
+    type: AddLinkDomainTypes.FAILURE,
+    payload: {
+        localId
+    }
+})
+
 const getSavingLink: GetAction<{ url: string; localId: string; }, SavingLink> = ({ url, localId }) => ({
     type: AddLinkDomainTypes.SAVING,
     payload: {
@@ -46,5 +53,6 @@ const getSavingLink: GetAction<{ url: string; localId: string; }, SavingLink> = 
 
 export {
     getSaveSuccess
+    , getSaveFailure
     , getSavingLink
 }

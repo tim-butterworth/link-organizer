@@ -5,6 +5,7 @@ import {
 import {
     filter
     , flatMap
+    , map
 } from 'rxjs/operators';
 
 import {
@@ -21,13 +22,33 @@ import {
     SaveSuccess
     , SaveFailure
     , getSavingLink
+    , getSaveFailure
+    , getSaveSuccess
 } from './addLinkDomainEvents';
 
 export interface Link {
     url: string
 }
 const just = of
-export type SaveLinkClient = (link: Link) => Observable<SaveSuccess | SaveFailure>;
+
+enum SaveLinkResultType {
+    SUCCESS = "SUCCESS",
+    FAILURE = "FAILURE"
+}
+interface SaveLinkResultSuccess {
+    type: SaveLinkResultType.SUCCESS;
+}
+const saveResultSuccess: SaveLinkResultSuccess = {
+    type: SaveLinkResultType.SUCCESS
+}
+interface SaveLinkResultFailure {
+    type: SaveLinkResultType.FAILURE
+}
+const saveResultFailure: SaveLinkResultFailure = {
+    type: SaveLinkResultType.FAILURE
+}
+
+export type SaveLinkClient = (link: Link) => Observable<SaveLinkResultSuccess | SaveLinkResultFailure>;
 
 let currentId: number = 0;
 const getNextLocalId: () => string = (): string => {
@@ -45,15 +66,31 @@ const getAddLinkEpic = (
     action: ActionsObservable<Actions>
 ) => action.pipe(
     filter((a: Actions): a is SaveLinkAction => a.type === "SAVE"),
-    flatMap((saveAction: SaveLinkAction) => concat(
-        just(getSavingLink({
-            url: saveAction.payload.link,
-            localId: getNextLocalId()
-        })),
-        saveLinkClient({ url: saveAction.payload.link })
-    ))
+    flatMap((saveAction: SaveLinkAction) => {
+        const localId = getNextLocalId();
+
+        return concat(
+            just(getSavingLink({
+                url: saveAction.payload.link,
+                localId
+            })),
+            saveLinkClient({ url: saveAction.payload.link }).pipe(
+                map((result: SaveLinkResultSuccess | SaveLinkResultFailure) => {
+                    console.log("result", result)
+
+                    if (result.type === SaveLinkResultType.FAILURE) {
+                        return getSaveFailure({ localId })
+                    } else {
+                        return getSaveSuccess({ localId, remoteId: "22" })
+                    }
+                })
+            )
+        )
+    })
 )
 
 export {
     getAddLinkEpic
+    , saveResultSuccess
+    , saveResultFailure
 }
